@@ -1,0 +1,167 @@
+###Settings###
+background no
+cpu_avg_samples 1
+default_bar_size 200 10
+default_graph_size 200 100
+diskio_avg_samples 10
+double_buffer yes
+extra_newline no
+if_up_strictness address
+net_avg_samples 1
+no_buffers yes
+temperature_unit celsius
+text_buffer_size 2048
+short_units yes
+update_interval 1
+###End Settings###
+
+###Position###
+alignment top_right
+gap_x 20
+gap_y 70
+minimum_size 500 520
+maximum_width 500
+###End Position###
+
+###Borders###
+border_inner_margin 0
+border_outer_margin 10
+border_width 0
+draw_borders no
+draw_graph_borders yes
+draw_outline no
+draw_shades no
+###End Borders###
+
+###Window###
+own_window yes
+own_window_argb_value 0
+own_window_argb_visual yes
+own_window_class systemConky
+own_window_colour 000000
+own_window_hints undecorated,below,above,sticky,skip_taskbar,skip_pager
+own_window_type desktop
+#own_window_type normal
+own_window_transparent yes
+own_window_title system_conky
+###End Window###
+
+###Font###
+use_xft yes
+override_utf8_locale yes
+xftfont Play:normal:size=8
+xftalpha 0.9
+uppercase no
+###End Font###
+
+# TEXT color
+default_color 333333
+
+# GREEN
+#color0 b2ff34
+#color1 efefef
+
+# BLUE
+color0 34cdff
+color1 efefef
+
+###Loading lua script###
+lua_load script.lua
+lua_draw_hook_pre script.lua
+lua_draw_hook_pre main
+###End Loading Lua###
+
+TEXT
+#########################
+##
+## CPU
+##
+#########################
+${font Play:normal:size=8}${voffset 7}${color1}${goto 100}${freq_g cpu0} Ghz${color1}${alignr 320}${execi 1 sensors | grep 'Core 0' | awk {'print $3'}}
+${font Play:normal:size=8}${voffset 0}${goto 120}${color1}CPU 1 ${alignr 320}${color1}${cpu cpu0}%
+${font Play:normal:size=8}${voffset 2}${goto 120}${color1}CPU 2${alignr 320}${color1}${cpu cpu1}%
+${font Play:normal:size=8}${voffset 2}${goto 120}${color1}CPU 3${alignr 320}${color1}${cpu cpu2}%
+${font Play:normal:size=8}${voffset 2}${goto 120}${color1}CPU 4${alignr 320}${color1}${cpu cpu3}%
+
+${goto 80}${font Play:normal:size=8}${color1}${top name 1}${alignr 306}${top cpu 1}%
+${goto 80}${font Play:normal:size=8}${color1}${top name 2}${alignr 306}${top cpu 2}%
+${goto 80}${font Play:normal:size=8}${color1}${top name 3}${alignr 306}${top cpu 3}%
+${font Michroma:size=10}${color0}${goto 60}${voffset 4}CPU
+#########################
+#
+# GPU
+#
+#########################
+${if_match "${execi 6000 glxinfo |egrep 'OpenGL vendor' |awk {'print $4'}}" == "NVIDIA"}${font Michroma:size=10}${voffset -70}${goto 394}${color0}${execi 6000 glxinfo|egrep 'OpenGL vendor'|awk {'print $4'}}
+${font Michroma:size=8}${voffset 1}${goto 385d}${color0}${execi 6000  nvidia-smi --query-supported-clocks=gpu_name --format=csv,noheader}
+${font Play:normal:size=8}${voffset -25}${goto 350}${color1}${execi 1 nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader} °C
+${font Play:normal:size=8}${voffset 8}${goto 385}${color1}Gpu Used${alignr}${execi 1 nvidia-settings -q all |grep Attribute |grep GPUUtilization | awk {'print $4'}} %
+${font Play:normal:size=8}${voffset 0}${goto 385}${color1}Mem Used ${alignr}${execi 5 nvidia-settings -q [gpu:0]/UsedDedicatedGPUMemory -t} / ${execi 6000 nvidia-settings -q [gpu:0]/TotalDedicatedGPUMemory -t} MiB
+${else}${if_match "${execi 6000 glxinfo |egrep 'OpenGL vendor' |awk {'print $4'}}"=="Intel"}${font Michroma:size=10}${voffset -70}${goto 394}${color0}${execi 6000 glxinfo|egrep 'OpenGL vendor'|awk {'print $4'}} 
+${font Michroma:size=8}${voffset 1}${goto 385}${color0}
+${font Play:normal:size=8}${voffset -25}${goto 350}${color1}${execi 1 sensors | grep 'Core 0' | awk {'print $3'}}
+${font Play:normal:size=8}${voffset 8}${goto 385}${color1}
+${font Play:normal:size=8}${voffset 0}${goto 385}${color1}
+${else}${font Michroma:size=10}${voffset -70}${goto 394}${color0}ERROR   GPU 
+${font Michroma:size=8}${voffset 1}${goto 385}${color0}
+${font Play:normal:size=8}${voffset -25}${goto 350}${color1}
+${font Play:normal:size=8}${voffset 8}${goto 385}${color1}
+${font Play:normal:size=8}${voffset 0}${goto 385}${color1}${endif}${endif}
+#########################
+##
+## MÉMOIRE
+##
+#########################
+${font Michroma:size=10}${color0}${goto 394}${voffset 53}MÉMOIRE
+${goto 324}${voffset -2}${font Play:normal:size=8}${color1}${top_mem name 1}${alignr 40}${top_mem mem 1}%
+${goto 324}${font Play:normal:size=8}${color1}${top_mem name 2}${alignr 40}${top_mem mem 2}%
+${goto 324}${font Play:normal:size=8}${color1}${top_mem name 3}${alignr 40}${top_mem mem 3}%
+${font Play:normal:size=8}${voffset 12}${goto 348}${color1}SWAP${alignr 40}${color1}${swap} / ${color1}${swapmax}
+${font Play:normal:size=8}${voffset 2}${goto 348}${color1}RAM ${alignr 40}${color1}${mem} / ${color1}${memmax}
+#########################
+##
+## DISQUE
+##
+#########################
+${font Play:normal:size=8}${goto 80}${voffset -68}Root${color1}${alignr 310}${fs_used /} / ${fs_size /}
+${font Play:normal:size=8}${goto 80}${voffset 0}Home${alignr 310}${color1}${fs_used /home} / ${fs_size /home/ahmed}
+${font Play:normal:size=8}${goto 80}${voffset 0}User${alignr 310}${color1}${fs_used /usr} / ${fs_size /usr}
+${font Michroma:size=10}${color0}${goto 66}${voffset 10}DISQUE  DUR
+#hddtemp /dev/sda
+#########################
+##
+## INFO  INTERNET
+##
+#########################
+${font Michroma:size=10}${color0}${voffset 33}${goto 324}INFO  INTERNET
+${if_existing /proc/net/route wlp3s0}${font Play:normal:size=8}${color1}${alignr 54}${voffset -6}WiFi  ${color1}${wireless_essid wlp3s0}
+${font Play:normal:size=8}${color1}${goto 298}${voffset 0}Up${goto 370}${color1}${totalup wlp3s0} / ${color1}${upspeed wlp3s0}
+${font Play:normal:size=8}${goto 298}${color1}Down${goto 370}${color1}${totaldown wlp3s0} / ${color1}${downspeed wlp3s0}
+${font Play:bold:size=8}${goto 300}${voffset 2}Local IP${goto 370}${addr wlp3s0}
+${font Play:bold:size=8}${goto 300}${voffset 1}Public IP${goto 370}${execi 300 wget -q -O - checkip.dyndns.org | sed -e 's/[^[:digit:]\|.]//g'}
+${font Play:bold:size=8}${goto 300}${voffset 1}Ping${goto 370}
+#########################
+${else}
+${if_existing /proc/net/route enp2s0}${font Play:normal:size=8}${color1}${goto 298}${voffset 6}Up${goto 370}${color1}${totalup enp2s0} / ${color1}${upspeed enp2s0}
+${font Play:normal:size=8}${goto 298}${color1}Down${goto 370}${color1}${totaldown enp2s0} / ${color1}${downspeed enp2s0}
+${font Play:bold:size=8}${goto 300}${voffset 2}Local IP${goto 370}${addr enp2s0}
+${font Play:bold:size=8}${goto 300}${voffset 1}Public IP${goto 370}${execi 300 wget -q -O - checkip.dyndns.org | sed -e 's/[^[:digit:]\|.]//g'}
+${else}
+${font Play:normal:size=8}${color1}${alignr 115}${voffset -30}NO INTERNET
+${font Play:normal:size=8}${color1}${goto 298}${voffset 53}${endif}${endif}
+#########################
+##
+## TIME
+##
+#########################
+${font Michroma:size=9}${goto 90}${voffset -67}${color0}${time %a} ${color0}${time %x}
+${font Michroma:size=18}${goto 108}${color1}${voffset -4}${time %H}:${time %M}
+#########################
+##
+## BATTERIE
+##
+#########################
+${font Michroma:size=8}${color0}${goto 296}${voffset 20}BATTERIE
+${font Play:size=8}${color0}${goto 278}${voffset 8}${color0}${battery_percent BAT0}%
+${font Play:normal:size=8}${color1}${alignr 140}${voffset -26}Uptime ${color1}${uptime_short}
+
